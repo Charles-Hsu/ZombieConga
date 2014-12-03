@@ -14,7 +14,9 @@ class GameScene: SKScene {
     let zombie1 = SKSpriteNode(imageNamed: "zombie1")
     var lastUpdateTime: NSTimeInterval = 0
     var dt: NSTimeInterval = 0
-    let zombieMovePointsPerSecInXDirection: CGFloat = 480.0
+    let zombieMovePointsPerSec: CGFloat = 480.0
+    var velocity = CGPointZero
+    var isFrozen: Bool = false
     
     override func didMoveToView(view: SKView) {
         backgroundColor = SKColor.whiteColor()
@@ -53,23 +55,6 @@ class GameScene: SKScene {
         
     }
     
-    // update FPS (Frame Per Second)
-    override func update(currentTime: NSTimeInterval) {
-        if lastUpdateTime > 0 {
-            dt = currentTime - lastUpdateTime
-        }
-        else {
-            dt = 0
-        }
-        lastUpdateTime = currentTime
-//        println("\(dt*1000) milliseconds since last update")
-//        zombie1.position = CGPoint( x:zombie1.position.x + 4 ,
-//                                    y:zombie1.position.y)
-        
-        moveSprite(zombie1, velocity: CGPoint(x: zombieMovePointsPerSecInXDirection, y: 0))
-        
-    }
-    
     func moveSprite(sprite: SKSpriteNode, velocity: CGPoint) {
         // Velocity 速度. Vector 向量 = direction 方向 + magnitude 位移
         // 位移量 = 速度 * 時間
@@ -82,8 +67,96 @@ class GameScene: SKScene {
         
     }
     
+    func moveZombieToward(location: CGPoint) {
+        if isFrozen {
+            velocity = CGPoint(x: 0, y: 0)
+        }
+        else {
+//        println("moveZombieToward:\(location)")
+        // the offset vector
+        let offset = CGPoint(x: location.x - zombie1.position.x,
+                             y: location.y - zombie1.position.y)
+//        println("offset:\(offset)")
+        // the length of the offset vector
+        let length = sqrt(Double(offset.x * offset.x + offset.y * offset.y))
+//        println("length:\(length)")
+        // the unit vector
+        let direction = CGPoint(x: offset.x/CGFloat(length),
+                                y: offset.y/CGFloat(length))
+//        println("direction:\(direction)")
+        // the velocity
+        velocity = CGPoint(x: direction.x * zombieMovePointsPerSec,
+                           y: direction.y * zombieMovePointsPerSec)
+//        println("velocity:\(velocity)")
+        }
+        
+    }
     
+    func sceneTouched(touchLocation:CGPoint) {
+        println("sceneTouched:\(touchLocation)")
+        moveZombieToward(touchLocation)
+    }
     
+    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+        let touch = touches.anyObject() as UITouch
+        println("touch.tapCount=\(touch.tapCount) in touchesBegan")
+        if touch.tapCount == 2 {
+            isFrozen = true
+        }
+        else {
+            isFrozen = false
+        }
+        let touchLocation = touch.locationInNode(self)
+        sceneTouched(touchLocation)
+    }
+    
+    override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
+        let touch = touches.anyObject() as UITouch
+        println("touch.tapCount=\(touch.tapCount) in touchesMoved")
+        let touchLocation = touch.locationInNode(self)
+        sceneTouched(touchLocation)
+    }
+    
+    // update FPS (Frame Per Second)
+    override func update(currentTime: NSTimeInterval) {
+        if lastUpdateTime > 0 {
+            dt = currentTime - lastUpdateTime
+        }
+        else {
+            dt = 0
+        }
+        lastUpdateTime = currentTime
+        //        println("\(dt*1000) milliseconds since last update")
+        //        zombie1.position = CGPoint( x:zombie1.position.x + 4 ,
+        //                                    y:zombie1.position.y)
+        
+//        moveSprite(zombie1, velocity: CGPoint(x: zombieMovePointsPerSec, y: 0))
+        // Hook up to touch events
+        moveSprite(zombie1, velocity: velocity)
+    }
+    
+
     
     
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
