@@ -20,6 +20,7 @@
 		C21D242E1A2DC13900E60AE3 /* YouLose.png in Resources */ = {isa = PBXBuildFile; fileRef = C21D24281A2DC13900E60AE3 /* YouLose.png */; };
 		C21D242F1A2DC13900E60AE3 /* YouWin.png in Resources */ = {isa = PBXBuildFile; fileRef = C21D24291A2DC13900E60AE3 /* YouWin.png */; };
 		C21D24301A2DC13900E60AE3 /* sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = C21D242A1A2DC13900E60AE3 /* sprites.atlas */; };
+		C2D247531A3023BB00C7ACB4 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = C2D247521A3023BB00C7ACB4 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +51,7 @@
 		C21D24281A2DC13900E60AE3 /* YouLose.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = YouLose.png; sourceTree = "<group>"; };
 		C21D24291A2DC13900E60AE3 /* YouWin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = YouWin.png; sourceTree = "<group>"; };
 		C21D242A1A2DC13900E60AE3 /* sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = sprites.atlas; sourceTree = "<group>"; };
+		C2D247521A3023BB00C7ACB4 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +75,7 @@
 		C21D23F21A2DB50E00E60AE3 = {
 			isa = PBXGroup;
 			children = (
+				C2D247521A3023BB00C7ACB4 /* README.md */,
 				C21D23FD1A2DB50E00E60AE3 /* ZombieConga */,
 				C21D24171A2DB50E00E60AE3 /* ZombieCongaTests */,
 				C21D23FC1A2DB50E00E60AE3 /* Products */,
@@ -249,6 +252,7 @@
 			files = (
 				C21D24051A2DB50E00E60AE3 /* GameScene.swift in Sources */,
 				C21D24071A2DB50E00E60AE3 /* GameViewController.swift in Sources */,
+				C2D247531A3023BB00C7ACB4 /* README.md in Sources */,
 				C21D24011A2DB50E00E60AE3 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -447,6 +451,7 @@
 				C21D24201A2DB50E00E60AE3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C21D24211A2DB50E00E60AE3 /* Build configuration list for PBXNativeTarget "ZombieCongaTests" */ = {
 			isa = XCConfigurationList;
@@ -455,6 +460,7 @@
 				C21D24231A2DB50E00E60AE3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

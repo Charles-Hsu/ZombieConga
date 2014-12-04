@@ -17,7 +17,30 @@ class GameScene: SKScene {
     let zombieMovePointsPerSec: CGFloat = 480.0
     var velocity = CGPointZero
     var isFrozen: Bool = false
+    let playableRect: CGRect
     
+    override init(size: CGSize) {
+        let maxAspectRatio:CGFloat = 16.0/9.0
+        let playableHeight = size.width / maxAspectRatio
+        let playableMargin = (size.height-playableHeight)/2.0
+        playableRect = CGRect(x: 0, y: playableMargin, width: size.width, height: playableHeight)
+        super.init(size: size)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func debugDrawPlayableArea() {
+        let shape = SKShapeNode()
+        let path = CGPathCreateMutable()
+        CGPathAddRect(path, nil, playableRect)
+        shape.path = path
+        shape.strokeColor = SKColor.redColor()
+        shape.lineWidth = 0.4
+        addChild(shape)
+    }
+
     override func didMoveToView(view: SKView) {
         backgroundColor = SKColor.whiteColor()
         let background = SKSpriteNode(imageNamed: "background1")
@@ -52,6 +75,7 @@ class GameScene: SKScene {
         
         addChild(zombie1)
         
+        debugDrawPlayableArea()
         
     }
     
@@ -118,8 +142,10 @@ class GameScene: SKScene {
     }
     
     func boundsCheckRombie() {
-        let bottomLeft = CGPointZero
-        let topRight = CGPoint(x: size.width, y: size.height)
+//        let bottomLeft = CGPointZero
+//        let topRight = CGPoint(x: size.width, y: size.height)
+        let bottomLeft = CGPoint(x: 0, y: CGRectGetMinY(playableRect))
+        let topRight = CGPoint(x: size.width, y: CGRectGetMaxY(playableRect))
         
         if zombie1.position.x <= bottomLeft.x {
             zombie1.position.x = bottomLeft.x
@@ -158,6 +184,7 @@ class GameScene: SKScene {
         // Hook up to touch events
         moveSprite(zombie1, velocity: velocity)
         boundsCheckRombie()
+        
     }
     
 
