@@ -117,6 +117,30 @@ class GameScene: SKScene {
         sceneTouched(touchLocation)
     }
     
+    func boundsCheckRombie() {
+        let bottomLeft = CGPointZero
+        let topRight = CGPoint(x: size.width, y: size.height)
+        
+        if zombie1.position.x <= bottomLeft.x {
+            zombie1.position.x = bottomLeft.x
+            velocity.x = -velocity.x
+        }
+        if zombie1.position.x >= topRight.x {
+            zombie1.position.x = topRight.x
+            velocity.x = -velocity.x
+        }
+        if zombie1.position.y <= bottomLeft.y {
+            zombie1.position.y = bottomLeft.y
+            velocity.y = -velocity.y
+        }
+        if zombie1.position.y >= topRight.y {
+            zombie1.position.y = topRight.y
+            velocity.y = -velocity.y
+        }
+    }
+    
+    
+    
     // update FPS (Frame Per Second)
     override func update(currentTime: NSTimeInterval) {
         if lastUpdateTime > 0 {
@@ -133,6 +157,7 @@ class GameScene: SKScene {
 //        moveSprite(zombie1, velocity: CGPoint(x: zombieMovePointsPerSec, y: 0))
         // Hook up to touch events
         moveSprite(zombie1, velocity: velocity)
+        boundsCheckRombie()
     }
     
 
