@@ -33,6 +33,10 @@ func rotateSprite(sprite: SKSpriteNode, direction: CGPoint) {
         atan2(Double(direction.y), Double(direction.x))) 
 }
 ```
+原本採用 touch.count == 2 的方式來 stop Rombie, 
+後來看 Tutorial 有更好的方式, 也就是先記錄上一次 touch 的地方, 
+然後在 update() 裡計算 Zombie 預計前往的位置, 比較兩者的大小.
+
 
 
 
