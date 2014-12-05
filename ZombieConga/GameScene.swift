@@ -210,27 +210,49 @@ class GameScene: SKScene {
         //        zombie1.position = CGPoint( x:zombie1.position.x + 4 ,
         //                                    y:zombie1.position.y)
         
-//        moveSprite(zombie1, velocity: CGPoint(x: zombieMovePointsPerSec, y: 0))
-        // Hook up to touch events
-        moveSprite(zombie, velocity: velocity)
-        boundsCheckRombie()
-        rotateSprite(zombie, direction: velocity)
+//        var distance:CGFloat?
+//        
+//        if (lastTouchLocation == nil) {
+//            distance = 100.0 // a bigger value
+//        }
+//        else {
+//            distance = (lastTouchLocation! - zombie.position).length()
+//        }
+//        println("Distance=\(distance)")
+//        let prospectiveMovement = CGFloat(dt) * zombieMovePointsPerSec
+//        if distance <= prospectiveMovement {
+//            moveSprite(zombie, velocity: CGPointZero)
+//            println("lastTouchPosition:\(lastTouchLocation)-zombiePosition:\(zombie.position)  =  \(distance)")
+//        }
+//        else {
+//            // Hook up to touch events
+//            moveSprite(zombie, velocity: velocity)
+//            rotateSprite(zombie, direction: velocity)
+//        }
         
-        
-        if (lastTouchLocation != nil) {
-            let distance = (lastTouchLocation! - zombie.position).length()
-//            println("lastTouchPosition:\(lastTouchLocation)-zombiePosition:\(zombie.position)=\(distance)")
-            let offset = CGFloat(dt) * zombieMovePointsPerSec
-            println("\(distance), dt*zombieMovePointsPerSec=\(offset)")
+        if let lastTouch = lastTouchLocation {
+            let diff = lastTouch - zombie.position
+            if diff.length() <= CGFloat(dt) * zombieMovePointsPerSec {
+                zombie.position = lastTouchLocation!
+                velocity = CGPointZero
+            }
+            else {
+                // Hook up to touch events
+                moveSprite(zombie, velocity: velocity)
+                rotateSprite(zombie, direction: velocity)
+            }
         }
-        
+
+        boundsCheckRombie()
         
     }
+    
+}
     
 
     
     
-}
+
 
 
 
