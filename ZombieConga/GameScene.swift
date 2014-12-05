@@ -12,14 +12,16 @@ class GameScene: SKScene {
     
     // property section
     let zombie = SKSpriteNode(imageNamed: "zombie1")
+    let zombieMovePointsPerSec: CGFloat = 480.0
+    let playableRect: CGRect
+    let zombieRotateRadiansPerSec:CGFloat = 4.0 * π
+    
     var lastUpdateTime: NSTimeInterval = 0
     var dt: NSTimeInterval = 0
-    let zombieMovePointsPerSec: CGFloat = 480.0
     var velocity = CGPointZero
     var isFrozen: Bool = false
-    let playableRect: CGRect
     var lastTouchLocation: CGPoint?
-    
+
     override init(size: CGSize) {
         let maxAspectRatio:CGFloat = 16.0/9.0
         let playableHeight = size.width / maxAspectRatio
@@ -184,7 +186,8 @@ class GameScene: SKScene {
     }
     
     // 讓 sprite Zombie 轉向面向前進的方向
-    func rotateSprite(sprite: SKSpriteNode, direction: CGPoint) {
+    func rotateSprite(sprite: SKSpriteNode, direction: CGPoint,
+                      rotateRadiansPerSec: CGFloat) {
         //sprite.zRotation = CGFloat(
         //    atan2(Double(direction.y), Double(direction.x)))
         
@@ -239,7 +242,10 @@ class GameScene: SKScene {
             else {
                 // Hook up to touch events
                 moveSprite(zombie, velocity: velocity)
-                rotateSprite(zombie, direction: velocity)
+                //let direction = velocity / 360.0
+                println("velocity:\(velocity)")
+                //rotateSprite(zombie, direction: velocity)
+                // rotateSprite(<#sprite: SKSpriteNode#>, direction: <#CGPoint#>, rotateRadiansPerSec: <#CGFloat#>)
             }
         }
 

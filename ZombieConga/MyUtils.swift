@@ -86,3 +86,24 @@ extension CGPoint {
     
 }
 
+let π = CGFloat(M_PI)
+
+func shortestAngleBetween(angle1: CGFloat,
+                          angle2: CGFloat) -> CGFloat {
+    var angle = (angle2 - angle1) % (2.0 * π) // 2 π = 360°
+    if angle >= π {
+        angle -= 2.0 * π
+    }
+    
+    if angle <= -π {
+        angle += 2.0 * π
+    }
+    return angle
+}
+
+extension CGFloat {
+    func sign() -> CGFloat {
+        println("extension CGFloat sign() self==\(self)")
+        return (self >= 0.0) ? 1.0 : -1.0
+    }
+}

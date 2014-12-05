@@ -1,12 +1,22 @@
 ZombieConga
 ===========
-A practice follows the guide of Ray Wenderlich
+A practice follows the guide written by Ray Wenderlich's Team
 
 using Swift + SpriteKit
 http://www.raywenderlich.com/store/ios-games-by-tutorials
 
 Updated 
 ----------------
+2014/12/05
+
+接下來要弄一個慢慢轉向的功能, 和我想的一樣. 不然, 現在直接轉身過去, 有點突兀. 附帶一提, swift 可以用中文名稱當變數. 當然也可以用 π 來當變數, 在程式碼裏頭寫這一小段. π 可以用 Option + p. 而 degree 可以用 Option + Shift + 8 來產生 ° 度的符號. π 可以用在程式裡頭, 不過 ° 度, 可能用在註解裡頭就好.
+
+由於 Swift 裡頭關於角度採用的是 Radian 為計算單位, 一個 π 等於 180°, 參考這裡 [Degree/Radian Circle](http://math.rice.edu/~pcmi/sphere/drg_txt.html). 我們已經知道目前的方向 degree1, 要轉向到 degree2, 嗯！看來要先研究一下搞懂數學計算. 完整復習一下 [Vector](http://http://www.mathsisfun.com/algebra/vectors.html)
+
+
+```swift
+let π = CGFloat(M_PI) // 360°
+```
 
 2014/12/04 
 
@@ -39,8 +49,7 @@ func rotateSprite(sprite: SKSpriteNode, direction: CGPoint) {
 不過這樣做比較複雜, 但原本的做法沒有保留方向, 使得每次暫停 Stop 時, 
 都會面向右邊. 可能需要再保留方向, 好處是只要在螢幕任意地方連敲兩下, 就可以暫停.
 
-###
-關於暫停的做法, 還是沒解. 看了 pdf, 寫完 code 的之後, 發現不是暫停, 而是會停在 lastTouchLocation 的地方, 和我想像的一二三木頭人是不一樣的. 暫時擺著, 慢慢再想. 不然只好整合原本的做法, 但記得要記錄方向, 讓木頭人維持方向. 但定住不動就是了!
+關於暫停的做法, 還是沒解. 看了 pdf, 寫完 code 的之後, 發現不是暫停, 而是會停在 lastTouchLocation 的地方, 和我想像的一二三木頭人是不一樣的. 只好看答案, 結果真的是停在 lastTouch 之處. 先暫時擺著, 慢慢再想. 不然只好整合原本的做法, 但記得要記錄方向, 讓木頭人維持方向. 但定住不動就是了!
 
 增加了一段 Helper 的 Swift 檔, 使程式碼看起來更簡潔
 
@@ -91,7 +100,7 @@ extension CGPoint {
 
 Info
 ====
-基本上, 程式的內容是依照[iOS Games by Tutorials Second Edition](http://www.raywenderlich.com/store/ios-games-by-tutorials)邊學邊記錄邊改的. 54$美金的教材, 換成台幣約1,700元, 主要還是要花上自己的時間跟努力, 還要不斷練習, 不要依照範本, 自己寫一個後, 才能深化後熟能生巧.
+基本上, 程式的內容是依照[iOS Games by Tutorials Second Edition](http://www.raywenderlich.com/store/ios-games-by-tutorials)邊學邊記錄邊改的. 54$美金的教材, 換成台幣約1,700元, 主要還是要花上自己的時間跟努力, 還要不斷練習, 不要依照範本, 自己寫一個後, 才能深化後熟能生巧. 就像鋼琴譜一樣, 一首曲子不過幾張紙, but, 幾分鐘的曲子, 要花多少時間才能熟練?! 大概十年吧!
 
 ```
 /*
