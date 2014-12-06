@@ -15,6 +15,8 @@ class GameScene: SKScene {
     let zombieMovePointsPerSec: CGFloat = 480.0
     let playableRect: CGRect
     let zombieRotateRadiansPerSec:CGFloat = 3.0 * π
+    let enemySpawnDuration = 5.0
+    let zombieAnimation: SKAction
     
     var lastUpdateTime: NSTimeInterval = 0
     var dt: NSTimeInterval = 0
@@ -26,6 +28,17 @@ class GameScene: SKScene {
         let maxAspectRatio:CGFloat = 16.0/9.0
         let playableHeight = size.width / maxAspectRatio
         let playableMargin = (size.height-playableHeight)/2.0
+        
+        var textures:[SKTexture] = []
+        for i in 1...4 {
+            textures.append(SKTexture(imageNamed: "zombie\(i)"))
+        }
+        textures.append(textures[2])
+        textures.append(textures[1])
+        
+        zombieAnimation = SKAction.repeatActionForever(
+            SKAction.animateWithTextures(textures, timePerFrame: 0.1))
+        
         playableRect = CGRect(x: 0, y: playableMargin, width: size.width, height: playableHeight)
         super.init(size: size)
     }
@@ -77,10 +90,14 @@ class GameScene: SKScene {
         // zomebie.setScale(CGFloat(2)) // SKNode method: scale the node to 2x
         
         addChild(zombie)
+        zombie.runAction(SKAction.repeatActionForever(zombieAnimation))
         
         debugDrawPlayableArea()
         
-        spwanEnemy()
+        //spwanEnemy()
+        runAction(SKAction.repeatActionForever(
+            SKAction.sequence([SKAction.runBlock(spwanEnemy),
+                               SKAction.waitForDuration(enemySpawnDuration)])))
         
     }
     
@@ -88,26 +105,59 @@ class GameScene: SKScene {
     func spwanEnemy() {
         let enemy = SKSpriteNode(imageNamed: "enemy")
         enemy.position = CGPoint(x: size.width + enemy.size.width/2,
-                                 y: size.height/2)
+                                 //y: size.height/2)
+                                 y: CGFloat.random(
+                                    min: CGRectGetMinY(playableRect) + enemy.size.height/2,
+                                    max: CGRectGetMaxY(playableRect) - enemy.size.height/2))
         addChild(enemy)
         
-        //let actionMove = SKAction.moveTo(CGPoint(x: -enemy.size.width/2, y: enemy.position.y), duration: 2.0)
-        // enemy.runAction(actionMove)
+        let actionMove = SKAction.moveTo(CGPoint(x: -enemy.size.width/2, y: enemy.position.y), duration: enemySpawnDuration)
+        let actionRemove = SKAction.removeFromParent()
         
+        enemy.runAction(SKAction.sequence([actionMove, actionRemove]))
+        //enemy.runAction(SKAction.sequence([actionMove]))
+        
+        // since SKAction.moveTo() is not reversable, use moveByX() to instead
+        /*
         let actionMidMove = SKAction.moveTo(
             CGPoint(x: size.width/2,
                     y: CGRectGetMinY(playableRect) + enemy.size.height/2),
              duration: 1.0)
         let actionMove = SKAction.moveTo(CGPoint(x: -enemy.size.width/2,
                                                  y: enemy.position.y),
-                                         duration: 1.0)
-        let sequence = SKAction.sequence([actionMidMove, actionMove])
+                                          duration: 1.0)
+        */
+        /*
+        let actionMidMove = SKAction.moveByX(-size.width/2-enemy.size.width/2,
+            y: -CGRectGetHeight(playableRect)/2, duration: 1.0)
+        
+        let actionMove = SKAction.moveByX(-size.width/2-enemy.size.width/2,
+            y: CGRectGetHeight(playableRect)/2 - enemy.size.height/2, duration: 1.0)
+        
+        let logMessage = SKAction.runBlock() {
+            println("Reached Bottom!")
+        }
+        
+        let reverseMid = actionMidMove.reversedAction()
+        let reverseMove = actionMove.reversedAction()
+        
+        let wait = SKAction.waitForDuration(0.25)
+        
+        //let sequence = SKAction.sequence([actionMidMove, logMessage, wait, actionMove,
+        //    reverseMove, logMessage, wait, reverseMid])
+        let halfSequence = SKAction.sequence([actionMidMove, logMessage, wait, actionMove])
+        let sequence = SKAction.sequence([halfSequence, halfSequence.reversedAction()])
 
-        enemy.runAction(sequence)
+        let repeat = SKAction.repeatActionForever(sequence)
+        
+        enemy.runAction(repeat)
+        
+//        enemy.runAction(sequence)
         
         // why the Enemy will bound when it hit the border but the zombie won't ????
         
         //let repeat = SKAction.repeatActionForever(seq)
+        */
         
         
     }
@@ -259,7 +309,7 @@ class GameScene: SKScene {
                 // Hook up to touch events
                 moveSprite(zombie, velocity: velocityVector)
                 //let direction = velocity / 360.0
-                println("velocityVector:\(velocityVector)")
+//                println("velocityVector:\(velocityVector)")
                 //rotateSprite(zombie, direction: velocity)
                 // rotateSprite(sprite: SKSpriteNode, direction: CGPoint, rotateRadiansPerSec: CGFloat)
                 rotateSprite(zombie, direction: velocityVector,
@@ -267,7 +317,7 @@ class GameScene: SKScene {
             //}
         }
 
-//        boundsCheckRombie()
+        boundsCheckRombie()
         
     }
     
