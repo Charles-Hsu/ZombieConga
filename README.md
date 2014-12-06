@@ -7,16 +7,20 @@ http://www.raywenderlich.com/store/ios-games-by-tutorials
 
 Updated 
 ----------------
+2014/12/06
+
+增加了 Crazy Cat Lady, 但為何撞到邊會彈回來, 而 Zombie 卻不會? 如果把 update() 裡頭的 boundsCheckRombie() mark 掉的話.
+
+
 2014/12/05
 
 接下來要弄一個慢慢轉向的功能, 和我想的一樣. 不然, 現在直接轉身過去, 有點突兀. 附帶一提, swift 可以用中文名稱當變數. 當然也可以用 π 來當變數, 在程式碼裏頭寫這一小段. π 可以用 Option + p. 而 degree 可以用 Option + Shift + 8 來產生 ° 度的符號. π 可以用在程式裡頭, 不過 ° 度, 可能用在註解裡頭就好.
 
-由於 Swift 裡頭關於角度採用的是 Radian 為計算單位, 一個 π 等於 180°, 參考這裡 [Degree/Radian Circle](http://math.rice.edu/~pcmi/sphere/drg_txt.html). 我們已經知道目前的方向 degree1, 要轉向到 degree2, 嗯！看來要先研究一下搞懂數學計算. 完整復習一下 [Vector](http://http://www.mathsisfun.com/algebra/vectors.html)
-
-
 ```swift
 let π = CGFloat(M_PI) // 360°
 ```
+
+由於 Swift 裡頭關於角度採用的是 Radian 為計算單位, 一個 π 等於 180°, 參考這裡 [Degree/Radian Circle](http://math.rice.edu/~pcmi/sphere/drg_txt.html). 我們已經知道目前的方向 degree1, 要轉向到 degree2, 先看目前的方向, 依照要轉的方向, 計算最短的轉向, 是向右轉90°, 而不是向左轉270°. 嗯！看來要先研究一下搞懂數學計算, 完整復習一下 [Vector](http://http://www.mathsisfun.com/algebra/vectors.html) 的概念.
 
 2014/12/04 
 

@@ -3,7 +3,8 @@
 //  ZombieConga
 //
 //  Created by Charles Hsu on 12/4/14.
-//  Copyright (c) 2014 Loxoll. All rights reserved.
+//Copyright (c) 2014 Loxoll. All rights reserved.
+
 //
 
 import Foundation

@@ -14,11 +14,11 @@ class GameScene: SKScene {
     let zombie = SKSpriteNode(imageNamed: "zombie1")
     let zombieMovePointsPerSec: CGFloat = 480.0
     let playableRect: CGRect
-    let zombieRotateRadiansPerSec:CGFloat = 4.0 * π
+    let zombieRotateRadiansPerSec:CGFloat = 3.0 * π
     
     var lastUpdateTime: NSTimeInterval = 0
     var dt: NSTimeInterval = 0
-    var velocity = CGPointZero
+    var velocityVector = CGPointZero
     var isFrozen: Bool = false
     var lastTouchLocation: CGPoint?
 
@@ -80,7 +80,40 @@ class GameScene: SKScene {
         
         debugDrawPlayableArea()
         
+        spwanEnemy()
+        
     }
+    
+    
+    func spwanEnemy() {
+        let enemy = SKSpriteNode(imageNamed: "enemy")
+        enemy.position = CGPoint(x: size.width + enemy.size.width/2,
+                                 y: size.height/2)
+        addChild(enemy)
+        
+        //let actionMove = SKAction.moveTo(CGPoint(x: -enemy.size.width/2, y: enemy.position.y), duration: 2.0)
+        // enemy.runAction(actionMove)
+        
+        let actionMidMove = SKAction.moveTo(
+            CGPoint(x: size.width/2,
+                    y: CGRectGetMinY(playableRect) + enemy.size.height/2),
+             duration: 1.0)
+        let actionMove = SKAction.moveTo(CGPoint(x: -enemy.size.width/2,
+                                                 y: enemy.position.y),
+                                         duration: 1.0)
+        let sequence = SKAction.sequence([actionMidMove, actionMove])
+
+        enemy.runAction(sequence)
+        
+        // why the Enemy will bound when it hit the border but the zombie won't ????
+        
+        //let repeat = SKAction.repeatActionForever(seq)
+        
+        
+    }
+    
+    
+    
     
     func moveSprite(sprite: SKSpriteNode, velocity: CGPoint) {
         // Velocity 速度. Vector 向量 = direction 方向 + magnitude 位移
@@ -98,40 +131,11 @@ class GameScene: SKScene {
     }
     
     func moveZombieToward(location: CGPoint) {
-        if isFrozen {
-            velocity = CGPoint(x: 0, y: 0)
-        }
-        else {
-        
-        // the offset vector
-        /*
-        let offset = CGPoint(x: location.x - zombie.position.x,
-                             y: location.y - zombie.position.y)
-        */
-        // using helper function
-        let offset = location - zombie.position
-            
-        // the length of the offset vector
-        /*
-        let length = sqrt(Double(offset.x * offset.x + offset.y * offset.y))
-        */
-        // using helper function
-        let length = offset.length()
-            
-        // the unit vector
-//        let direction = CGPoint(x: offset.x/CGFloat(length),
-//                                y: offset.y/CGFloat(length))
-        let direction = offset / CGFloat(length)
-            
-        // the velocity
-        /*
-        velocity = CGPoint(x: direction.x * zombieMovePointsPerSec,
-                           y: direction.y * zombieMovePointsPerSec)
-        */
-        // using helper function
-        velocity = direction * zombieMovePointsPerSec
-        
-        }
+
+        let offsetVector = location - zombie.position
+        let length = offsetVector.length()
+        let unitVecotr = offsetVector / CGFloat(length)
+        velocityVector = unitVecotr * zombieMovePointsPerSec
         
     }
     
@@ -169,35 +173,47 @@ class GameScene: SKScene {
         
         if zombie.position.x <= bottomLeft.x {
             zombie.position.x = bottomLeft.x
-            velocity.x = -velocity.x
+            velocityVector.x = -velocityVector.x
         }
         if zombie.position.x >= topRight.x {
             zombie.position.x = topRight.x
-            velocity.x = -velocity.x
+            velocityVector.x = -velocityVector.x
         }
         if zombie.position.y <= bottomLeft.y {
             zombie.position.y = bottomLeft.y
-            velocity.y = -velocity.y
+            velocityVector.y = -velocityVector.y
         }
         if zombie.position.y >= topRight.y {
             zombie.position.y = topRight.y
-            velocity.y = -velocity.y
+            velocityVector.y = -velocityVector.y
         }
     }
     
-    // 讓 sprite Zombie 轉向面向前進的方向
-    func rotateSprite(sprite: SKSpriteNode, direction: CGPoint,
-                      rotateRadiansPerSec: CGFloat) {
-        //sprite.zRotation = CGFloat(
-        //    atan2(Double(direction.y), Double(direction.x)))
-        
-        /*
-        var angle: CGFloat {
-            return atan2(y, x)
+    /*
+    func rotateSprite(sprite: SKSpriteNode, direction: CGPoint, rotateRadiansPerSec: CGFloat) {
+        let currentAngle:CGFloat = sprite.position.angle
+        let targetAngle:CGFloat = direction.angle
+        //sprite.zRotation = targetAngle // target angle
+        let shortestAngle = shortestAngleBetween(currentAngle, targetAngle)
+        println("shortestAngle=\(shortestAngle)")
+        // let zombieRotateRadiansPerSec:CGFloat = 4.0 * π // 4π = 2π * 2 = 每秒轉兩圈
+        var amountToRotate = shortestAngle * zombieRotateRadiansPerSec
+        if shortestAngle < amountToRotate {
+            amountToRotate = shortestAngle
         }
-        */
-        // using Helper
-        sprite.zRotation = direction.angle
+        
+        //sprite.zRotation = amountToRotate.sign() // target angle
+        sprite.zRotation = amountToRotate // target angle
+
+    }
+    */
+    
+    // copy from the answer !!!
+    func rotateSprite(sprite: SKSpriteNode, direction: CGPoint, rotateRadiansPerSec: CGFloat) {
+        // Your code here!
+        let shortest = shortestAngleBetween(sprite.zRotation, velocityVector.angle)
+        let amountToRotate = min(rotateRadiansPerSec * CGFloat(dt), abs(shortest))
+        sprite.zRotation += shortest.sign() * amountToRotate
     }
     
     // update FPS (Frame Per Second)
@@ -232,24 +248,26 @@ class GameScene: SKScene {
 //            moveSprite(zombie, velocity: velocity)
 //            rotateSprite(zombie, direction: velocity)
 //        }
-        
+
         if let lastTouch = lastTouchLocation {
             let diff = lastTouch - zombie.position
-            if diff.length() <= CGFloat(dt) * zombieMovePointsPerSec {
-                zombie.position = lastTouchLocation!
-                velocity = CGPointZero
-            }
-            else {
+            //if diff.length() <= CGFloat(dt) * zombieMovePointsPerSec {
+            //    zombie.position = lastTouchLocation!
+            //    velocityVector = CGPointZero
+            //}
+            //else {
                 // Hook up to touch events
-                moveSprite(zombie, velocity: velocity)
+                moveSprite(zombie, velocity: velocityVector)
                 //let direction = velocity / 360.0
-                println("velocity:\(velocity)")
+                println("velocityVector:\(velocityVector)")
                 //rotateSprite(zombie, direction: velocity)
-                // rotateSprite(<#sprite: SKSpriteNode#>, direction: <#CGPoint#>, rotateRadiansPerSec: <#CGFloat#>)
-            }
+                // rotateSprite(sprite: SKSpriteNode, direction: CGPoint, rotateRadiansPerSec: CGFloat)
+                rotateSprite(zombie, direction: velocityVector,
+                                     rotateRadiansPerSec: zombieRotateRadiansPerSec)
+            //}
         }
 
-        boundsCheckRombie()
+//        boundsCheckRombie()
         
     }
     
