@@ -15,15 +15,25 @@ class GameScene: SKScene {
     let zombieMovePointsPerSec: CGFloat = 480.0
     let playableRect: CGRect
     let zombieRotateRadiansPerSec:CGFloat = 3.0 * π
-    let enemySpawnDuration = 5.0
+    let enemySpawnDuration = 3.0
     let zombieAnimation: SKAction
     let zombieAnimationKey = "animation"
+    
+    let catCollisionSound: SKAction = SKAction.playSoundFileNamed("hitCat.wav",
+                                      waitForCompletion: false)
+    // http://www.flashkit.com/soundfx/Cartoon/wheeee-Public_D-399/index.php
+    let enemyCollisionSound: SKAction = SKAction.playSoundFileNamed("wheeee-Public_D-399_hifi.mp3",
+                                        waitForCompletion: false)
     
     var lastUpdateTime: NSTimeInterval = 0
     var dt: NSTimeInterval = 0
     var velocityVector = CGPointZero
     var isFrozen: Bool = false
     var lastTouchLocation: CGPoint?
+    var isInvicible = false
+    
+    //var testUpdateCount:Int32 = 0
+    //var testDidEvaluateActionsCount:Int32 = 0
 
     override init(size: CGSize) {
         let maxAspectRatio:CGFloat = 16.0/9.0
@@ -118,16 +128,104 @@ class GameScene: SKScene {
             SKAction.sequence([SKAction.runBlock(spwanEnemy),
                                SKAction.waitForDuration(enemySpawnDuration)])))
         
+        runAction(SKAction.repeatActionForever(
+            SKAction.sequence([SKAction.runBlock(spawnCat),
+                               SKAction.waitForDuration(1.0)])))
+        
     }
     
+    func zombieHitCat(cat: SKSpriteNode) {
+        cat.removeFromParent()
+        //runAction(SKAction.playSoundFileNamed("hitCat.wav", waitForCompletion: false))
+        //println("zombieHitCat")
+        runAction(catCollisionSound)
+    }
+    
+    func zombieHitEnemy(enemy: SKSpriteNode) {
+        enemy.removeFromParent()
+        //runAction(SKAction.playSoundFileNamed("hitCatLady.wav", waitForCompletion: false))
+        //runAction(SKAction.playSoundFileNamed("wheeee-Public_D-399_hifi.mp3", waitForCompletion: false))
+        // http://www.flashkit.com/soundfx/Cartoon/wheeee-Public_D-399/index.php
+        //println("zombieHitEnemy")
+        runAction(enemyCollisionSound)
+    }
+    
+    //runAction(SKAction.playSoundFileNamed("hitCatLady.wav", waitForCompletion: false))
+
+    func checkCollision() {
+        var hitCats: [SKSpriteNode] = []
+        enumerateChildNodesWithName("cat") { node, _ in
+            let cat = node as SKSpriteNode
+            if CGRectIntersectsRect(cat.frame, self.zombie.frame) {
+                hitCats.append(cat)
+            }
+        }
+        for cat in hitCats {
+            zombieHitCat(cat)
+        }
+        
+        if !isInvicible {
+            var hitEnemies: [SKSpriteNode] = []
+            enumerateChildNodesWithName("enemy") { node, _ in
+                let enemy = node as SKSpriteNode
+                if CGRectIntersectsRect(
+                    CGRectInset(node.frame, 50, 50), self.zombie.frame) {
+                    hitEnemies.append(enemy)
+                }
+            }
+            for enemy in hitEnemies {
+                zombieHitEnemy(enemy)
+            }
+        }
+    }
+    
+    func spawnCat() {
+        let cat = SKSpriteNode(imageNamed: "cat")
+        cat.name = "cat"
+        cat.position = CGPoint(
+            x: CGFloat.random(min: CGRectGetMinX(playableRect), max: CGRectGetMaxX(playableRect)),
+            y: CGFloat.random(min: CGRectGetMinY(playableRect), max: CGRectGetMaxY(playableRect)))
+        
+        cat.setScale(0)
+        addChild(cat)
+        
+        let appear = SKAction.scaleTo(1.0, duration: 0.5)
+
+        cat.zRotation = -π / 16.0  // 11.25°
+        //let wait = SKAction.waitForDuration(10.0)
+        
+        let leftWiggle = SKAction.rotateByAngle(π/8.0, duration: 0.5)
+        let rightWiggle = leftWiggle.reversedAction()
+        let fullWiggle = SKAction.sequence([leftWiggle, rightWiggle])
+        
+        //let wiggleWait = SKAction.repeatAction(fullWiggle, count: 10)
+        
+        let scaleUp = SKAction.scaleBy(1.2, duration: 0.25)
+        let scaleDown = scaleUp.reversedAction()
+        let fullScale = SKAction.sequence([scaleUp, scaleDown, scaleUp, scaleDown])
+        
+        // a group action to run the wiggling and scaling at the same time
+        let group = SKAction.group([fullScale, fullWiggle])
+        
+        let groupWait = SKAction.repeatAction(group, count: 10)
+
+        let disappear = SKAction.scaleTo(0, duration: 0.5)
+        let removeFromParent = SKAction.removeFromParent()
+        
+        let actions = [appear, groupWait, disappear, removeFromParent]
+        
+        cat.runAction(SKAction.sequence(actions))
+    }
     
     func spwanEnemy() {
         let enemy = SKSpriteNode(imageNamed: "enemy")
+        enemy.name = "enemy"
         enemy.position = CGPoint(x: size.width + enemy.size.width/2,
                                  //y: size.height/2)
                                  y: CGFloat.random(
                                     min: CGRectGetMinY(playableRect) + enemy.size.height/2,
                                     max: CGRectGetMaxY(playableRect) - enemy.size.height/2))
+        
         addChild(enemy)
         
         let actionMove = SKAction.moveTo(CGPoint(x: -enemy.size.width/2, y: enemy.position.y), duration: enemySpawnDuration)
@@ -339,6 +437,19 @@ class GameScene: SKScene {
 
         boundsCheckRombie()
         
+        //checkCollision()
+        // using didEvaluateActions() instead
+        //testUpdateCount++
+        
+        //println("updateCount:\(testUpdateCount) didEvaluateCount:\(testDidEvaluateActionsCount)")
+        
+        
+    }
+    
+    override func didEvaluateActions() {
+        //testDidEvaluateActionsCount++
+        checkCollision()
+        //println("didEvaluateActions")
     }
     
 }

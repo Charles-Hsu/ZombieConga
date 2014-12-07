@@ -13,12 +13,26 @@ Updated
 
 ```swift
 
-func startZombieAnimation()
-func stopZombieAnimation()
+let zombieAnimationKey = "animation"
+
+func startZombieAnimation() {}
+func stopZombieAnimation() {}
 
 ```
 
+有了主角 Zombie, 有 Crazy Cat Lady, 接下來就要再加入 Cat. 出現的方式用 Pop in, 先設 scale 為 0, 然後一會兒後變成 1, 停留 10 秒鐘, 變為 0, 再消失掉. 完成後, 應該是要加入碰撞的功能以及聲音了, 還有背景應該要可以移動, 所以背景的頭尾要注意能銜接, 串得起來. Zombie 有生命點數, 被 Crazy Cat Lady 吃掉, 也就是撞到幾次後, 就應該要 lost the game. 或許可以再增加過關的功能, 也就是 Cat Lady 越來越快 ... 
 
+SpriteKit 有兩種 Collision 的 detect 方式, 1) Intermediate Physics 2) bounding-box, 用 enumerateChildNodesWithName(usingBlock:) 搭配 Sprite 的 frame 屬性.
+
+```swift
+override func didEvaluateActions() {
+    checkCollision()
+}
+```
+
+測試了一下 update() 和 didEvaluateActions() 的差別, 發現在 simulator 上差別不大, 甚至 update() 還快了一點點 XD
+
+接下來要加入聲音, 一個沒有聲音的 game 怪怪的, 雖然有時很吵, 但可以調小聲一點點. 聲音可以以屬性的方式先在 property 裡載入, 不需要在 func 中每次載入. 另外就是要增加一個無效的功能, 也就是被敵人打到時, 可以維持一段時間算是金剛不壞一閃一閃的 invicible status.
 
 2014/12/06
 

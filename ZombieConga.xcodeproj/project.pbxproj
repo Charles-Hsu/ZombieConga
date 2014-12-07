@@ -20,6 +20,12 @@
 		C21D242E1A2DC13900E60AE3 /* YouLose.png in Resources */ = {isa = PBXBuildFile; fileRef = C21D24281A2DC13900E60AE3 /* YouLose.png */; };
 		C21D242F1A2DC13900E60AE3 /* YouWin.png in Resources */ = {isa = PBXBuildFile; fileRef = C21D24291A2DC13900E60AE3 /* YouWin.png */; };
 		C21D24301A2DC13900E60AE3 /* sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = C21D242A1A2DC13900E60AE3 /* sprites.atlas */; };
+		C2CF686A1A342F9C00700A15 /* backgroundMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C2CF68651A342F9C00700A15 /* backgroundMusic.mp3 */; };
+		C2CF686B1A342F9C00700A15 /* hitCat.wav in Resources */ = {isa = PBXBuildFile; fileRef = C2CF68661A342F9C00700A15 /* hitCat.wav */; };
+		C2CF686C1A342F9C00700A15 /* hitCatLady.wav in Resources */ = {isa = PBXBuildFile; fileRef = C2CF68671A342F9C00700A15 /* hitCatLady.wav */; };
+		C2CF686D1A342F9C00700A15 /* lose.wav in Resources */ = {isa = PBXBuildFile; fileRef = C2CF68681A342F9C00700A15 /* lose.wav */; };
+		C2CF686E1A342F9C00700A15 /* win.wav in Resources */ = {isa = PBXBuildFile; fileRef = C2CF68691A342F9C00700A15 /* win.wav */; };
+		C2CF68701A34377200700A15 /* wheeee-Public_D-399_hifi.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C2CF686F1A34377200700A15 /* wheeee-Public_D-399_hifi.mp3 */; };
 		C2D247551A306FB800C7ACB4 /* MyUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D247541A306FB800C7ACB4 /* MyUtils.swift */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +57,12 @@
 		C21D24281A2DC13900E60AE3 /* YouLose.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = YouLose.png; sourceTree = "<group>"; };
 		C21D24291A2DC13900E60AE3 /* YouWin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = YouWin.png; sourceTree = "<group>"; };
 		C21D242A1A2DC13900E60AE3 /* sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = sprites.atlas; sourceTree = "<group>"; };
+		C2CF68651A342F9C00700A15 /* backgroundMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = backgroundMusic.mp3; sourceTree = "<group>"; };
+		C2CF68661A342F9C00700A15 /* hitCat.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hitCat.wav; sourceTree = "<group>"; };
+		C2CF68671A342F9C00700A15 /* hitCatLady.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hitCatLady.wav; sourceTree = "<group>"; };
+		C2CF68681A342F9C00700A15 /* lose.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = lose.wav; sourceTree = "<group>"; };
+		C2CF68691A342F9C00700A15 /* win.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = win.wav; sourceTree = "<group>"; };
+		C2CF686F1A34377200700A15 /* wheeee-Public_D-399_hifi.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "wheeee-Public_D-399_hifi.mp3"; sourceTree = "<group>"; };
 		C2D247521A3023BB00C7ACB4 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C2D247541A306FB800C7ACB4 /* MyUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -95,6 +107,7 @@
 		C21D23FD1A2DB50E00E60AE3 /* ZombieConga */ = {
 			isa = PBXGroup;
 			children = (
+				C2CF68641A342F9C00700A15 /* Sounds */,
 				C21D24241A2DC13900E60AE3 /* Images */,
 				C21D242A1A2DC13900E60AE3 /* sprites.atlas */,
 				C21D24001A2DB50E00E60AE3 /* AppDelegate.swift */,
@@ -144,6 +157,19 @@
 				C21D24291A2DC13900E60AE3 /* YouWin.png */,
 			);
 			path = Images;
+			sourceTree = "<group>";
+		};
+		C2CF68641A342F9C00700A15 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				C2CF686F1A34377200700A15 /* wheeee-Public_D-399_hifi.mp3 */,
+				C2CF68651A342F9C00700A15 /* backgroundMusic.mp3 */,
+				C2CF68661A342F9C00700A15 /* hitCat.wav */,
+				C2CF68671A342F9C00700A15 /* hitCatLady.wav */,
+				C2CF68681A342F9C00700A15 /* lose.wav */,
+				C2CF68691A342F9C00700A15 /* win.wav */,
+			);
+			path = Sounds;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -230,10 +256,16 @@
 				C21D24301A2DC13900E60AE3 /* sprites.atlas in Resources */,
 				C21D240F1A2DB50E00E60AE3 /* LaunchScreen.xib in Resources */,
 				C21D242D1A2DC13900E60AE3 /* MainMenu.png in Resources */,
+				C2CF686D1A342F9C00700A15 /* lose.wav in Resources */,
 				C21D242E1A2DC13900E60AE3 /* YouLose.png in Resources */,
 				C21D240C1A2DB50E00E60AE3 /* Images.xcassets in Resources */,
+				C2CF686E1A342F9C00700A15 /* win.wav in Resources */,
 				C21D242C1A2DC13900E60AE3 /* background2.png in Resources */,
+				C2CF68701A34377200700A15 /* wheeee-Public_D-399_hifi.mp3 in Resources */,
 				C21D240A1A2DB50E00E60AE3 /* Main.storyboard in Resources */,
+				C2CF686A1A342F9C00700A15 /* backgroundMusic.mp3 in Resources */,
+				C2CF686C1A342F9C00700A15 /* hitCatLady.wav in Resources */,
+				C2CF686B1A342F9C00700A15 /* hitCat.wav in Resources */,
 				C21D242B1A2DC13900E60AE3 /* background1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
