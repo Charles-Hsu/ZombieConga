@@ -17,6 +17,7 @@ class GameScene: SKScene {
     let zombieRotateRadiansPerSec:CGFloat = 3.0 * π
     let enemySpawnDuration = 5.0
     let zombieAnimation: SKAction
+    let zombieAnimationKey = "animation"
     
     var lastUpdateTime: NSTimeInterval = 0
     var dt: NSTimeInterval = 0
@@ -36,15 +37,28 @@ class GameScene: SKScene {
         textures.append(textures[2])
         textures.append(textures[1])
         
+        
+        
         zombieAnimation = SKAction.repeatActionForever(
             SKAction.animateWithTextures(textures, timePerFrame: 0.1))
-        
         playableRect = CGRect(x: 0, y: playableMargin, width: size.width, height: playableHeight)
         super.init(size: size)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func startZombieAnimation() {
+         if zombie.actionForKey(zombieAnimationKey) == nil {
+            zombie.runAction(
+                SKAction.repeatActionForever(zombieAnimation),
+                withKey: zombieAnimationKey)
+        }
+    }
+    
+    func stopZombieAnimation() {
+        zombie.removeActionForKey(zombieAnimationKey)
     }
     
     func debugDrawPlayableArea() {
@@ -90,7 +104,12 @@ class GameScene: SKScene {
         // zomebie.setScale(CGFloat(2)) // SKNode method: scale the node to 2x
         
         addChild(zombie)
-        zombie.runAction(SKAction.repeatActionForever(zombieAnimation))
+        
+        //
+        // using the methods: start/stopZombieAnimation() to replace with
+        //
+        //zombie.runAction(SKAction.repeatActionForever(zombieAnimation))
+        //
         
         debugDrawPlayableArea()
         
@@ -186,6 +205,8 @@ class GameScene: SKScene {
         let length = offsetVector.length()
         let unitVecotr = offsetVector / CGFloat(length)
         velocityVector = unitVecotr * zombieMovePointsPerSec
+        
+        startZombieAnimation()  // 1234321234321....
         
     }
     
@@ -301,20 +322,19 @@ class GameScene: SKScene {
 
         if let lastTouch = lastTouchLocation {
             let diff = lastTouch - zombie.position
-            //if diff.length() <= CGFloat(dt) * zombieMovePointsPerSec {
-            //    zombie.position = lastTouchLocation!
-            //    velocityVector = CGPointZero
-            //}
-            //else {
+            if diff.length() <= CGFloat(dt) * zombieMovePointsPerSec {
+                zombie.position = lastTouchLocation!
+                velocityVector = CGPointZero
+                stopZombieAnimation()
+            }
+            else {
                 // Hook up to touch events
                 moveSprite(zombie, velocity: velocityVector)
                 //let direction = velocity / 360.0
-//                println("velocityVector:\(velocityVector)")
                 //rotateSprite(zombie, direction: velocity)
-                // rotateSprite(sprite: SKSpriteNode, direction: CGPoint, rotateRadiansPerSec: CGFloat)
                 rotateSprite(zombie, direction: velocityVector,
                                      rotateRadiansPerSec: zombieRotateRadiansPerSec)
-            //}
+            }
         }
 
         boundsCheckRombie()

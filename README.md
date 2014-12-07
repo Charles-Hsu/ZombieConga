@@ -7,6 +7,19 @@ http://www.raywenderlich.com/store/ios-games-by-tutorials
 
 Updated 
 ----------------
+2014/12/07
+
+加入兩個 functions 讓 Zombie 在停止時可以不要 12343212... 的扭來扭去, 利用 SKAction.actionForKey 來實作, 由於 key 是 string, 可能會打錯, 所以定義一個 constant 在 class 的 property 裡頭, 避免不小心打錯 string
+
+```swift
+
+func startZombieAnimation()
+func stopZombieAnimation()
+
+```
+
+
+
 2014/12/06
 
 增加了 Crazy Cat Lady, 但為何撞到邊會彈回來, 而 Zombie 卻不會? 如果把 update() 裡頭的 boundsCheckRombie() mark 掉的話. 似乎是 SKAction 自己和其他的 Sprite 的作用. 慢慢再看!
@@ -14,12 +27,12 @@ Updated
 再把 Zombie 加工, 用 Textures 的方式, 讓 Zombie 移動時有 1234321234... 的圖片動態的循環.
 
 ```swift
-        var textures:[SKTexture] = []
-        for i in 1...4 {
-            textures.append(SKTexture(imageNamed: "zombie\(i)"))
-        }
-        textures.append(textures[2])
-        textures.append(textures[1])
+    var textures:[SKTexture] = []
+    for i in 1...4 {
+        textures.append(SKTexture(imageNamed: "zombie\(i)"))
+    }
+    textures.append(textures[2])
+    textures.append(textures[1])
 ```
 
 2014/12/05
