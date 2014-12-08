@@ -58,6 +58,25 @@ func playBackgroundMusic(filename: String) {
 
 整個 Game 大致算完成, 接下去要處理背景的移動, 而不是靜止不動的 background.
 
+```swift
+func moveBackground() {
+    enumerateChildNodesWithName("background") { node, _ in
+        let background = node as SKSpriteNode
+        let backgroundVelocity = CGPoint(x: -self.backgroundMovePointPerSec, y: 0)
+        let amountToMove = backgroundVelocity * CGFloat(self.dt)
+        background.position += amountToMove
+        if background.position.x <= -background.size.width {
+            background.position = CGPoint(
+                x: background.position.x + background.size.width*2,
+                y: background.position.y)
+        }
+    }
+}
+```
+
+加了一個會移動的背景, 不過卻產生另一個問題, 貓咪和背景一起移動了. 原則上喵咪應該是在原地不動才是呀
+
+
 2014/12/07
 
 加入兩個 functions 讓 Zombie 在停止時可以不要 12343212... 的扭來扭去, 利用 SKAction.actionForKey 來實作, 由於 key 是 string, 可能會打錯, 所以定義一個 constant 在 class 的 property 裡頭, 避免不小心打錯 string

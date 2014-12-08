@@ -19,6 +19,7 @@ class GameScene: SKScene {
     let zombieAnimation: SKAction
     let zombieAnimationKey = "animation"
     let catMovePointsPerSec: CGFloat = 480.0
+    let backgroundMovePointPerSec: CGFloat = 200.0
     
     let catCollisionSound: SKAction = SKAction.playSoundFileNamed("hitCat.wav",
                                       waitForCompletion: false)
@@ -87,16 +88,55 @@ class GameScene: SKScene {
         shape.lineWidth = 0.4
         addChild(shape)
     }
+    
+    func backgroundNode() -> SKSpriteNode {
+        let backgroundNode = SKSpriteNode()
+        backgroundNode.anchorPoint = CGPointZero
+        backgroundNode.name = "background"
+        
+        let background1 = SKSpriteNode(imageNamed: "background1")
+        background1.anchorPoint = CGPointZero
+        background1.position = CGPoint(x: 0, y: 0)
+        backgroundNode.addChild(background1)
+        
+        let background2 = SKSpriteNode(imageNamed: "background2")
+        background2.anchorPoint = CGPointZero
+        background2.position = CGPoint(x: background1.size.width, y: 0)
+        backgroundNode.addChild(background2)
+        
+        backgroundNode.size = CGSize(
+            width: background1.size.width + background2.size.width,
+            height: background1.size.height)
+        
+        return backgroundNode
+    }
+    
+    func moveBackground() {
+        enumerateChildNodesWithName("background") { node, _ in
+            let background = node as SKSpriteNode
+            let backgroundVelocity = CGPoint(x: -self.backgroundMovePointPerSec, y: 0)
+            let amountToMove = backgroundVelocity * CGFloat(self.dt)
+            background.position += amountToMove
+            
+            println("background.position.x = \(background.position.x) ||| -background.size.width = \(-background.size.width)")
+            
+            if background.position.x <= -background.size.width {
+                background.position = CGPoint(
+                    x: background.position.x + background.size.width*2,
+                    y: background.position.y)
+            }
+        }
+    }
 
     override func didMoveToView(view: SKView) {
         backgroundColor = SKColor.whiteColor()
-        let background = SKSpriteNode(imageNamed: "background1")
+        //let background = SKSpriteNode(imageNamed: "background1")
         
-        playBackgroundMusic("backgroundMusic.mp3")
+        playBackgroundMusic("backgroundMusic.mp3") // helper in MyUtils.swift
         
         // The position of the node in its parent's coordinate system.
         // The default value is (0.0, 0.0) === CGPointZero
-        background.position = CGPoint(x: size.width/2, y: size.height/2)
+        //background.position = CGPoint(x: size.width/2, y: size.height/2)
         // the default anchorPoint is (0.5, 0.5)
 
         // or use anchorPoint to do that
@@ -109,12 +149,24 @@ class GameScene: SKScene {
         // refer following information for radian vs degree
         // http://math.rice.edu/~pcmi/sphere/drg_txt.html
      
-        background.zPosition = -1
+        //
+        // An endless scrolling background
+        //
+        for i in 0...1 {
+            let background = backgroundNode()
+            background.anchorPoint = CGPointZero
+            //background.position = CGPointZero
+            background.position =
+                CGPoint(x: CGFloat(i) * background.size.width, y: 0)
+            background.name = "background"
+            //background.zPosition = -1
+            addChild(background)
+        }
+
+        //addChild(background)
         
-        addChild(background)
-        
-        let mySize = background.size
-        println("Size: \(mySize)")
+        //let mySize = background.size
+        //println("Size: \(mySize)")
         
         // adding a zombie sprite to the scene
         
@@ -564,6 +616,8 @@ class GameScene: SKScene {
         boundsCheckRombie()
         
         moveTrain()
+        
+        moveBackground()
         
         if lives <= 0 && !gameOver {
             gameOver = true
