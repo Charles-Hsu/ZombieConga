@@ -18,19 +18,26 @@ class GameScene: SKScene {
     let enemySpawnDuration = 3.0
     let zombieAnimation: SKAction
     let zombieAnimationKey = "animation"
+    let catMovePointsPerSec: CGFloat = 480.0
     
     let catCollisionSound: SKAction = SKAction.playSoundFileNamed("hitCat.wav",
                                       waitForCompletion: false)
     // http://www.flashkit.com/soundfx/Cartoon/wheeee-Public_D-399/index.php
-    let enemyCollisionSound: SKAction = SKAction.playSoundFileNamed("wheeee-Public_D-399_hifi.mp3",
-                                        waitForCompletion: false)
+    //let enemyCollisionSound: SKAction = SKAction.playSoundFileNamed("wheeee-Public_D-399_hifi.mp3",
+    //                                    waitForCompletion: false)
     
+    let enemyCollisionSound: SKAction = SKAction.playSoundFileNamed("hitCatLady.wav",
+                                        waitForCompletion: false)
+
     var lastUpdateTime: NSTimeInterval = 0
     var dt: NSTimeInterval = 0
     var velocityVector = CGPointZero
     var isFrozen: Bool = false
     var lastTouchLocation: CGPoint?
     var isInvicible = false
+    
+    var lives = 5
+    var gameOver = false
     
     //var testUpdateCount:Int32 = 0
     //var testDidEvaluateActionsCount:Int32 = 0
@@ -85,6 +92,8 @@ class GameScene: SKScene {
         backgroundColor = SKColor.whiteColor()
         let background = SKSpriteNode(imageNamed: "background1")
         
+        playBackgroundMusic("backgroundMusic.mp3")
+        
         // The position of the node in its parent's coordinate system.
         // The default value is (0.0, 0.0) === CGPointZero
         background.position = CGPoint(x: size.width/2, y: size.height/2)
@@ -110,7 +119,7 @@ class GameScene: SKScene {
         // adding a zombie sprite to the scene
         
         zombie.position = CGPoint(x: 400, y: 400)
-        zombie.zPosition = 0
+        zombie.zPosition = 100 // larger z values are "out of screen"
         // zomebie.setScale(CGFloat(2)) // SKNode method: scale the node to 2x
         
         addChild(zombie)
@@ -121,7 +130,7 @@ class GameScene: SKScene {
         //zombie.runAction(SKAction.repeatActionForever(zombieAnimation))
         //
         
-        debugDrawPlayableArea()
+        //debugDrawPlayableArea()
         
         //spwanEnemy()
         runAction(SKAction.repeatActionForever(
@@ -135,19 +144,134 @@ class GameScene: SKScene {
     }
     
     func zombieHitCat(cat: SKSpriteNode) {
-        cat.removeFromParent()
+        //cat.removeFromParent()
+
+        runAction(catCollisionSound)
+
+        cat.name = "train"
+        cat.removeAllActions()
+        cat.setScale(1.0)
+        cat.zRotation = 0
+        
+        let turnGreen = SKAction.colorizeWithColor(SKColor.greenColor(), colorBlendFactor: 1.0, duration: 0.2)
+        
+        cat.runAction(turnGreen)
+        
+        //cat.runAction(SKAction.sequence([
+        //    SKAction.colorizeWithColor(SKColor.greenColor(), colorBlendFactor: 1.0, duration: 0.2),
+        //    SKAction.colorizeWithColorBlendFactor(0.0, duration: 1.0)
+        //    ])
+        //)
+        
         //runAction(SKAction.playSoundFileNamed("hitCat.wav", waitForCompletion: false))
         //println("zombieHitCat")
-        runAction(catCollisionSound)
+    }
+    
+    func loseCats() {
+        var loseCount = 0
+        
+        /*
+        enumerateChildNodesWithName(name: String) { (SKNode!, UnsafeMutablePointer<ObjCBool>) -> Void in
+            code
+        }
+        */
+        enumerateChildNodesWithName("train") { node, stop in
+            
+            var randomSpot = node.position
+            
+            randomSpot.x += CGFloat.random(min: -100, max: 100)
+            randomSpot.y += CGFloat.random(min: -100, max: 100)
+            
+            var group = SKAction.group( [
+                            SKAction.rotateByAngle(CGFloat(M_PI) * 4.0, duration: 1.0),
+                            SKAction.moveTo(randomSpot, duration: 1.0),
+                            SKAction.scaleTo(0, duration: 1.0) ] )
+            
+            node.name = ""
+            node.runAction(SKAction.sequence( [group, SKAction.removeFromParent()] ))
+            
+            loseCount++
+            
+            if loseCount >= 2 {
+                stop.memory = true // break out of enumeration
+            }
+        }
+    }
+    
+    func moveTrain() {
+        
+        var trainCount = 0
+        
+        var targetPosition = zombie.position
+        
+        enumerateChildNodesWithName("train") {
+            node, _ in
+            
+            trainCount++
+            
+            if !node.hasActions() {
+                let actionDuration = 0.3
+                let offset = targetPosition - node.position // a
+                let direction = offset.normalized() // b
+                let amountToMovePerSec = direction * self.catMovePointsPerSec // c
+                let amountToMove = amountToMovePerSec * CGFloat(actionDuration) // d
+                let moveAction = SKAction.moveByX(amountToMove.x, y: amountToMove.y, duration: actionDuration) // e
+                node.runAction(moveAction)
+            }
+            targetPosition = node.position
+        }
+        
+        //println("lives=\(lives), trainCount=\(trainCount)")
+        
+        if trainCount >= 10 && !gameOver {
+            gameOver = true
+            println("You win!")
+            
+            backgroundMusicPlayer.stop()
+            
+            let gameOverScene = GameOverScene(size: size, won: true)
+            gameOverScene.scaleMode = scaleMode
+            
+            let reveal = SKTransition.flipHorizontalWithDuration(0.5)
+            view?.presentScene(gameOverScene, transition: reveal)
+        }
+        
     }
     
     func zombieHitEnemy(enemy: SKSpriteNode) {
-        enemy.removeFromParent()
-        //runAction(SKAction.playSoundFileNamed("hitCatLady.wav", waitForCompletion: false))
-        //runAction(SKAction.playSoundFileNamed("wheeee-Public_D-399_hifi.mp3", waitForCompletion: false))
-        // http://www.flashkit.com/soundfx/Cartoon/wheeee-Public_D-399/index.php
-        //println("zombieHitEnemy")
+        //enemy.removeFromParent()
+        
         runAction(enemyCollisionSound)
+        
+        loseCats()
+        lives--
+        
+        isInvicible = true
+        
+        let blinkTimes = 10.0
+        let duration = 3.0
+        
+        let blinkAction = SKAction.customActionWithDuration(duration) {
+            node, elapsedTime in
+            let slice = duration / blinkTimes
+            let remainder = Double(elapsedTime) % slice
+            node.hidden = remainder > slice / 2
+            //println("blink")
+        }
+        
+        //let sequence = SKAction.sequence([actionMidMove, logMessage, wait, actionMove,
+        //    reverseMove, logMessage, wait, reverseMid])
+        //let halfSequence = SKAction.sequence([actionMidMove, logMessage, wait, actionMove])
+        //let sequence = SKAction.sequence([halfSequence, halfSequence.reversedAction()])
+        let wakeUpZombie = SKAction.runBlock() {
+            self.isInvicible = false
+            self.zombie.hidden = false
+            //println("isInvicible = false")
+        }
+
+        zombie.runAction(SKAction.sequence([blinkAction, wakeUpZombie]))
+
+        //runAction(SKAction.playSoundFileNamed("hitCatLady.wav", waitForCompletion: false))
     }
     
     //runAction(SKAction.playSoundFileNamed("hitCatLady.wav", waitForCompletion: false))
@@ -164,18 +288,20 @@ class GameScene: SKScene {
             zombieHitCat(cat)
         }
         
-        if !isInvicible {
-            var hitEnemies: [SKSpriteNode] = []
-            enumerateChildNodesWithName("enemy") { node, _ in
-                let enemy = node as SKSpriteNode
-                if CGRectIntersectsRect(
-                    CGRectInset(node.frame, 50, 50), self.zombie.frame) {
-                    hitEnemies.append(enemy)
-                }
+        if isInvicible {
+            return
+        }
+        
+        var hitEnemies: [SKSpriteNode] = []
+        enumerateChildNodesWithName("enemy") { node, _ in
+            let enemy = node as SKSpriteNode
+            if CGRectIntersectsRect(
+                CGRectInset(node.frame, 20, 20), self.zombie.frame) {
+                hitEnemies.append(enemy)
             }
-            for enemy in hitEnemies {
-                zombieHitEnemy(enemy)
-            }
+        }
+        for enemy in hitEnemies {
+            zombieHitEnemy(enemy)
         }
     }
     
@@ -436,6 +562,23 @@ class GameScene: SKScene {
         }
 
         boundsCheckRombie()
+        
+        moveTrain()
+        
+        if lives <= 0 && !gameOver {
+            gameOver = true
+            println("You lose!")
+            
+            backgroundMusicPlayer.stop()
+            
+            let gameOverScene = GameOverScene(size: size, won: false)
+
+            gameOverScene.scaleMode = scaleMode
+            
+            let reveal = SKTransition.flipHorizontalWithDuration(0.5)
+            view?.presentScene(gameOverScene, transition: reveal)
+
+        }
         
         //checkCollision()
         // using didEvaluateActions() instead

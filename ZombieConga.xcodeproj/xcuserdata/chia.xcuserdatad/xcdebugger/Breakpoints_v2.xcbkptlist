@@ -10,28 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ZombieConga/GameScene.swift"
-            timestampString = "439631075.429632"
+            timestampString = "439729288.282545"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "429"
-            endingLineNumber = "429"
-            landmarkName = "update(_:)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ZombieConga/GameScene.swift"
-            timestampString = "439631075.429632"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "180"
-            endingLineNumber = "180"
-            landmarkName = "spawnCat()"
+            startingLineNumber = "245"
+            endingLineNumber = "245"
+            landmarkName = "zombieHitEnemy(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

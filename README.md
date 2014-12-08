@@ -7,6 +7,57 @@ http://www.raywenderlich.com/store/ios-games-by-tutorials
 
 Updated 
 ----------------
+2014/12/08
+
+加了兩個 Scene, GameOverScene 和 MainMenuScene. 一開始先進入 MainMenuScene, 按了一個螢幕後, 轉移到 GameScene, 這要更改 GameViewController 裡的設定. 在 MainMenuScene 裡頭增加一個 touchesBegin(), 當 touch 事件發生時, 轉移到 GameScene.
+
+```swift
+class MainMenuScene: SKScene {
+    override func didMoveToView(view: SKView) {
+        var background: SKSpriteNode
+        background = SKSpriteNode(imageNamed: "MainMenu.png")
+        background.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
+        self.addChild(background)
+    }
+    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+        sceneTapped()
+    }
+    func sceneTapped() {
+        let gameScene = GameScene(size:CGSize(width: self.size.width, height: self.size.height))
+        gameScene.scaleMode = scaleMode
+        let reveal = SKTransition.doorsOpenHorizontalWithDuration(1.5)
+        view?.presentScene(gameScene, transition: reveal)
+    }
+}
+```
+
+GameScene 如果輸贏情況發生時, 就轉移到 GameOverScene 裡頭. 同時增加了 GameScene 的背景音樂.
+
+贏的條件目前設定是這樣: 吃到十隻貓咪變成 Zombie 跟在後面跳康康舞就算贏了. 如果被碰到 Crazy Cat Lady 吃到, 就扣一條命, 同時減兩隻貓咪. 輸的條件目前設定是被 Crazy Cat Lady 撞到一次減一命, 0 條命就是輸了.
+
+另外, 遊戲基本上一定有背景音樂. 放在 GameScene 的 didMoveToView(view: SKView) 裡頭
+
+```swift
+func playBackgroundMusic(filename: String) {
+    let url = NSBundle.mainBundle().URLForResource(filename, withExtension: nil)
+    if url == nil {
+        println("Could not find file:\(filename)")
+        return
+    }
+    var error: NSError? = nil
+    backgroundMusicPlayer = AVAudioPlayer(contentsOfURL: url, error: &error)
+    if backgroundMusicPlayer == nil {
+        println("Could not create audio player: \(error!)")
+        return
+    }
+    backgroundMusicPlayer.numberOfLoops = -1
+    backgroundMusicPlayer.prepareToPlay()
+    backgroundMusicPlayer.play()
+}
+```
+
+整個 Game 大致算完成, 接下去要處理背景的移動, 而不是靜止不動的 background.
+
 2014/12/07
 
 加入兩個 functions 讓 Zombie 在停止時可以不要 12343212... 的扭來扭去, 利用 SKAction.actionForKey 來實作, 由於 key 是 string, 可能會打錯, 所以定義一個 constant 在 class 的 property 裡頭, 避免不小心打錯 string
@@ -33,6 +84,39 @@ override func didEvaluateActions() {
 測試了一下 update() 和 didEvaluateActions() 的差別, 發現在 simulator 上差別不大, 甚至 update() 還快了一點點 XD
 
 接下來要加入聲音, 一個沒有聲音的 game 怪怪的, 雖然有時很吵, 但可以調小聲一點點. 聲音可以以屬性的方式先在 property 裡載入, 不需要在 func 中每次載入. 另外就是要增加一個無效的功能, 也就是被敵人打到時, 可以維持一段時間算是金剛不壞一閃一閃的 invicible status.
+
+因為是 Zombie Conga, 參加康康舞會的 cat 被 Zombie 抓到後要排隊在 Zombie 之後, 這段程式碼坦白講不太懂, 先記錄下來, 等以後再來研究
+
+func enumerateChildNodesWithName(name: String, usingBlock block: ((SKNode!, UnsafeMutablePointer<ObjCBool>) -> Void)!)
+Description Search the children of the receiving node to perform processing for nodes which share a name.
+Parameters  
+name  The name to search for.
+block A block to execute on nodes that match the name parameter.
+Availability  iOS (8.0 and later)
+Declared In SpriteKit
+Reference SKNode Class Reference
+
+```swift
+func moveTrain() {
+    var targetPosition = zombie.position
+    enumerateChildNodesWithName("train") {
+        node, _ in
+        if !node.hasActions() {
+            let actionDuration = 0.3
+            let offset = targetPosition - node.position // a
+            let direction = offset.normalized() // b
+            let amountToMovePerSec = direction * self.catMovePointsPerSec // c
+            let amountToMove = amountToMovePerSec * CGFloat(actionDuration) // d
+            let moveAction = 
+                SKAction.moveByX(amountToMove.x, 
+                                 y: amountToMove.y, 
+                          duration: actionDuration) // e
+            node.runAction(moveAction)
+        }
+        targetPosition = node.position
+    }
+}
+```
 
 2014/12/06
 
