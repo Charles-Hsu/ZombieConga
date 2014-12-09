@@ -7,6 +7,11 @@ http://www.raywenderlich.com/store/ios-games-by-tutorials
 
 Updated 
 ----------------
+
+2014/12/09
+
+產生一個新的 backgroundLayer, 把所有的 SpriteKit 都加入成為 child, 完成後, 建立一個 share 的 group, 然後 target 增加 OSX. 不過隻, 有 error 發生, 拿 tutorial 裡頭的 source 直接 compile 也一樣. 已經在 [forum](http://raywenderlich.com/forums/viewtopic.php?f=38&t=8756&start=30#p79922) 上發問了
+
 2014/12/08
 
 加了兩個 Scene, GameOverScene 和 MainMenuScene. 一開始先進入 MainMenuScene, 按了一個螢幕後, 轉移到 GameScene, 這要更改 GameViewController 裡的設定. 在 MainMenuScene 裡頭增加一個 touchesBegin(), 當 touch 事件發生時, 轉移到 GameScene.

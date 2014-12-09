@@ -9,6 +9,7 @@
 import SpriteKit
 
 class MainMenuScene: SKScene {
+    
     override func didMoveToView(view: SKView) {
         var background: SKSpriteNode
         background = SKSpriteNode(imageNamed: "MainMenu.png")
@@ -16,9 +17,19 @@ class MainMenuScene: SKScene {
         self.addChild(background)
     }
     
+    #if os(iOS)
+    
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         sceneTapped()
     }
+    
+    #else
+    
+    override func mouseDown(theEvent: NSEvent) {
+        sceneTapped()
+    }
+    
+    #endif
     
     //let scene = GameScene(size:CGSize(width: 2048, height: 1536))
 
