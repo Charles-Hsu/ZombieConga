@@ -10,7 +10,7 @@ Updated
 
 2014/12/09
 
-產生一個新的 backgroundLayer, 把所有的 SpriteKit 都加入成為 child, 完成後, 建立一個 share 的 group, 然後 target 增加 OSX. 不過隻, 有 error 發生, 拿 tutorial 裡頭的 source 直接 compile 也一樣. 已經在 [forum](http://raywenderlich.com/forums/viewtopic.php?f=38&t=8756&start=30#p79922) 上發問了
+產生一個新的 backgroundLayer, 把所有的 SpriteKit 都加入成為 child, 完成後, 建立一個 share 的 group, 然後 target 增加 OSX. 不過有 error 發生, 拿 tutorial 裡頭的 source 直接 compile 也一樣. 已經在 [forum](http://raywenderlich.com/forums/viewtopic.php?f=38&t=8756&start=30#p79922) 上發問了. 我的 OSX 是 10.9, 升級到 10.10 之後, 問題就沒有了. 但是, why?
 
 2014/12/08
 
